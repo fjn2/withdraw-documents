@@ -1,0 +1,106 @@
+<html>
+  <head>
+      <title>Retiro de estudio</title>
+  </head>
+  <body>
+    <center><h1>Estudios Retirados</h1></center>
+    <hr>
+    <hr>
+    <select id="orderType">
+        <option value="ProtE">Ecografia/Holter/EcoCardio (ProtE)</option>
+        <option value="ProtM">EcoDoppler (ProtM)</option>
+        <option value="ProtRx">Mamografia/Radiografia (ProtRx)</option>
+      <option value="ProtD">Densitometria (ProtD)</option>
+    </select>
+    Numero de protocolo: <input type="text" id="protocolo" />
+    <input type="button" value="Agregar" onclick="addOrder()" />
+    <hr/>
+    <hr/>
+    <div class="list"></div>
+
+    <script type="text/javascript">
+      function addOrder() {
+        const protocolId = document.getElementById('protocolo').value;
+        const orderType = document.getElementById('orderType').value;
+
+        fetch('/', {
+          method: 'post',
+          headers: {
+            "Content-type": "application/json"
+          },
+          body: JSON.stringify({
+            id: protocolId,
+            type: orderType
+          })
+        })
+        .then(function (data) {
+          // data has the result
+          console.log(data);
+        })
+        .then(clearList)
+        .then(getList);
+      }
+      function getList() {
+        fetch('/', {})
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function (data) {
+          // fill the list
+          console.log(data);
+          const list = document.querySelector('.list')
+
+          data.forEach((item) => {
+            const li = document.createElement('li');
+            const spanOrderType = document.createElement('span');
+            const spanOrderNumber = document.createElement('span');
+            const spanDate = document.createElement('span');
+
+            spanOrderType.innerText = item.id;
+            spanOrderNumber.innerText = item.type;
+            spanDate.innerText = formatDate(item.date);
+
+            li.appendChild(spanOrderType);
+            li.appendChild(spanOrderNumber);
+            li.appendChild(spanDate);
+
+            list.appendChild(li);
+          });
+        });
+      }
+      function clearList() {
+        document.querySelector('.list').innerHTML = '';
+      }
+
+      function formatDate(dateStr) {
+        if (dateStr) {
+          var monthNames = [
+            "January", "February", "March",
+            "April", "May", "June", "July",
+            "August", "September", "October",
+            "November", "December"
+          ];
+          const date = new Date(dateStr);
+
+          var day = date.getDate();
+          var monthIndex = date.getMonth();
+          var year = date.getFullYear();
+
+          return day + ' ' + monthNames[monthIndex] + ' ' + year;
+        }
+      }
+
+      getList();
+    </script>
+    <style type="text/css">
+      .list li {
+        display: flex;
+      }
+      .list li * {
+        flex:1;
+      }
+      li:nth-child(even) {background: #CCC}
+      li:nth-child(odd) {background: #FFF}
+    </style>
+  </body>
+</html>
