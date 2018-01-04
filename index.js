@@ -3,6 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 
+const port = process.env.PORT || 4050;
+
 const files = [];
 const filePath = './data.csv';
 
@@ -58,5 +60,5 @@ data.split('\n').forEach((item) => {
   }
 });
 
-app.listen(3000, () => console.log('Example app listening on port 3000!'));
+app.listen(port, () => console.log('Example app listening on port ' + port + '!'));
 
